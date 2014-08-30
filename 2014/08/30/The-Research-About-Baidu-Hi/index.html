@@ -1,26 +1,68 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title><![CDATA[Light 4 Freedom]]></title>
-  <subtitle><![CDATA[Give me liberty or give me death.]]></subtitle>
-  <link href="/atom.xml" rel="self"/>
-  <link href="http://l4f.club/"/>
-  <updated>2014-08-30T12:01:03.998Z</updated>
-  <id>http://l4f.club/</id>
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
   
-  <author>
-    <name><![CDATA[John Doe]]></name>
+  <title>百度Hi安全性探究 | Light 4 Freedom</title>
+  <meta name="author" content="John Doe">
+  
+  <meta name="description" content="自由之光,Light4Freedom,CTF,L4F">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="百度Hi安全性探究"/>
+  <meta property="og:site_name" content="Light 4 Freedom"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Light 4 Freedom" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Light 4 Freedom</a></h1>
+  <h2><a href="/">Give me liberty or give me death.</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
     
-  </author>
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
-  <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-08-30T12:00:00.000Z"><a href="/2014/08/30/The-Research-About-Baidu-Hi/">Aug 30 2014</a></time>
+      
+      
   
-  <entry>
-    <title><![CDATA[百度Hi安全性探究]]></title>
-    <link href="http://l4f.club/2014/08/30/The-Research-About-Baidu-Hi/"/>
-    <id>http://l4f.club/2014/08/30/The-Research-About-Baidu-Hi/</id>
-    <published>2014-08-30T12:00:00.000Z</published>
-    <updated>2014-08-30T12:00:53.000Z</updated>
-    <content type="html"><![CDATA[<p>Author: Binary.Kim@Light4Freedom</p>
+    <h1 class="title">百度Hi安全性探究</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Author: Binary.Kim@Light4Freedom</p>
 <h1 id="缘起">缘起</h1>
 <p>今天天气好，就想分析个软件看看安全性。(・ω・)ノ 然后就随意翻翻，就决定开始分析下百度Hi，并且对它的安全性进行一次分析，并将结果反馈给了百度，最后花了<del>一会儿</del>不止一会儿写了这篇文章。然后自我介绍下，我叫金龟子。大家可以叫我 Binary.Kim 简称「BK」。</p>
 <h1 id="另">另</h1>
@@ -103,101 +145,163 @@
 <p>cbuteng是bk的固有领土！你们不许调戏我妹子。</p>
 <h1 id="某人打个广告">某人打个广告</h1>
 <p>有想成为或者已经成为「赛棍」的盆友们，如果想加入L4F一起打ctf欢迎 mail: new(at)l4f.club 。并带上你打ctf的经历，还有你的技术方向。等一系列证明你自己的东西，l4f欢迎各位小伙伴。(￣▽￣)</p>
-]]></content>
-    <summary type="html"><![CDATA[<p>Author: Binary.Kim@Light4Freedom</p>
-<h1 id="缘起">缘起</h1>
-<p>今天天气好，就想分析个软件看看安全性。(・ω・)ノ 然后就随意翻翻，就决定开始分析下百度Hi，并且对它的安全性进行一次分析，并将结果反馈给了百度，最后花了<del>一会儿</del>不止一会儿写了这篇文章。然后自我介绍下，我叫金龟子。大家可以叫我 Binary.Kim 简称「BK」。</p>
-<h1 id="另">另</h1>
-<p>本文为妹子拙作，比较详细，记录了下我分析的过程，不喜勿喷。 ಥ_ಥ<br>]]></summary>
-    
-      <category term="百度Hi" scheme="http://l4f.club/tags/%E7%99%BE%E5%BA%A6Hi/"/>
-    
-      <category term="逆向" scheme="http://l4f.club/tags/%E9%80%86%E5%90%91/"/>
-    
-      <category term="Binary" scheme="http://l4f.club/categories/Binary/"/>
-    
-  </entry>
+
+      
+    </div>
+    <footer>
+      
+        
   
-  <entry>
-    <title><![CDATA[About Us]]></title>
-    <link href="http://l4f.club/2014/08/04/About-Us/"/>
-    <id>http://l4f.club/2014/08/04/About-Us/</id>
-    <published>2014-08-03T16:00:00.000Z</published>
-    <updated>2014-08-30T09:10:06.000Z</updated>
-    <content type="html"><![CDATA[<p>Author : Kay@Light4Freedom</p>
-<pre>海面风平浪静，海岸旁一座灯塔屹立，光芒延伸向远方……
+  <div class="categories">
+    <a href="/categories/Binary/">Binary</a>
+  </div>
 
-安全的世界亦是如此，乍看之下天下太平，
-实则平静的水面下暗流涌动。
+        
+  
+  <div class="tags">
+    <a href="/tags/百度Hi/">百度Hi</a>, <a href="/tags/逆向/">逆向</a>
+  </div>
 
-于是，这里便有这样一群人出现，他们热衷于「安全」，
-在掩藏于表面之下的世界，探寻一切可能性。
-像灯塔一般，划破黑暗，照亮远方。</pre>
+        <!--
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+-->
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
 
 
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://l4f.club/2014/08/30/The-Research-About-Baidu-Hi/" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:l4f.club">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/About/">About</a><small>1</small></li>
+  
+    <li><a href="/categories/Binary/">Binary</a><small>1</small></li>
+  
+  </ul>
+</div>
 
 
+  
+<div class="widget tagcloud">
+  <h3 class="title">Tag Cloud</h3>
+  <div class="entry">
+    <a href="/tags/Light4Freedom/" style="font-size: NaNpx;">Light4Freedom</a><a href="/tags/intro/" style="font-size: NaNpx;">intro</a><a href="/tags/百度Hi/" style="font-size: NaNpx;">百度Hi</a><a href="/tags/自由之光/" style="font-size: NaNpx;">自由之光</a><a href="/tags/逆向/" style="font-size: NaNpx;">逆向</a>
+  </div>
+</div>
 
-<p>「自由之光」（Light 4 Freedom）团队便是由这样一群人组成。</p>
-<h1 id="我们是谁">我们是谁</h1>
-<p>Light 4 Freedom 是一个不依附于任何个人、组织而存在的安全兴趣团队，成立至今也有几个年头了。我们因为共同对安全领域的热爱痴迷而走到一起，哪里有技术哪里就可能有我们成员的身影。<br>可以爱 Web ，也可以钻研二进制；<br>可以爱系统内核，也可以折腾硬件设备。<br>无论被细分到了何种领域，只要是安全方向，我们便能畅快地交流、共同学习、一起实战。能做点实事，便是我们最简单而真实的初衷。<br>不过放轻松，<br>我们只是因为热爱安全聚在一起玩玩而已，<br>在有限是时间里高效学习，在无限的时间里肆意扯谈，天（jie）文（cao）地（xia）理（xian）无（si）所（hu）不（mei）包（you）。</p>
-<a id="more"></a>
 
-
-<h1 id="逝者如斯">逝者如斯</h1>
-<p>过去几年，我们的团队成员混迹于各大比赛，所以其实你可以叫我们「赛棍」的。</p>
-<p><strong>以下是团队荣誉不完全统计：</strong></p>
-<ul>
-<li><p>2012 年 11 月  西安电子科技大学网络攻防大赛第一名</p>
-</li>
-<li><p>2013 年 11 月  西安电子科技大学网络攻防大赛第二名</p>
-</li>
-<li><p>2014 年 03 月  0ctf 获得第二名</p>
-</li>
-<li><p>2014 年 04 月  第一届 XP 挑战赛 团队成员 Puzzor 获第一名</p>
-</li>
-<li><p>2014 年 04 月  360安全招聘 HackGame Web 方向 AppLeU0 获第二名</p>
-</li>
-<li><p>2014 年 05 月  获得百度杯 BCTF 网络攻防大赛决赛第四名</p>
-</li>
-<li><p>2014 年 07 月  第二届 XP 挑战赛 团队成员 TedJoy 第一个攻破北信源并与团队成员 nGod 用不同的思路双双攻破百度卫士</p>
-</li>
-<li><p>2014 年 08 月  阿里安全·阿里 500 万安全赏金计划 对团队成员 EvilMoon 反馈的安全漏洞 给予五万元现金奖励以及公示感谢   </p>
-</li>
+  <div class="widget tag">
+<h3 class="title">友情链接</h3>
+<ul class="entry">
+<li><a href="http://hungiinthesky.net" title="HungI Chao">HungI Chao</a></li>
+<li><a href="http://le4f.net" title="冷夜">冷夜</a></li>
+<li><a href="http://fuckgcd.net" title="redrain">redrain</a></li>
+<li><a href="http://www.leelour.com" title="leelour">LeeLour</a></li>
+<li><a href="http://www.programlife.net/" title="Winson">Winson</a></li>
+<li><a href="http://www.reedchao.com/" title="ReeChao">ReedChao</a></li>
 </ul>
-<p>…………</p>
-<h1 id="未来因我们而来">未来因我们而来</h1>
-<p>在未来，我们将继续脚踏实地学习研究各类安全技术，追逐和坚持技术自由,同时敞开胸怀接纳更多新人的加入，广泛与同行以及各行各业对安全感兴趣的同仁们交流合作，<br>我们的愿景是，将安全研究与应用技术紧密结合，把安全落实于各个行业领域当中，让你在生活的方方面面都能感受到「安全」的存在。</p>
-<h1 id="天下大同">天下大同</h1>
-<p>如果你也跟我们一样不羁放纵爱自由，聪明机智爱安全。无论是新人还是牛人还是新生代牛人，我们都热情欢迎你的加入。</p>
-]]></content>
-    <summary type="html"><![CDATA[<p>Author : Kay@Light4Freedom</p>
-<pre>海面风平浪静，海岸旁一座灯塔屹立，光芒延伸向远方……
+</div>
 
-安全的世界亦是如此，乍看之下天下太平，
-实则平静的水面下暗流涌动。
-
-于是，这里便有这样一群人出现，他们热衷于「安全」，
-在掩藏于表面之下的世界，探寻一切可能性。
-像灯塔一般，划破黑暗，照亮远方。</pre>
-
-
-
-
-
-<p>「自由之光」（Light 4 Freedom）团队便是由这样一群人组成。</p>
-<h1 id="我们是谁">我们是谁</h1>
-<p>Light 4 Freedom 是一个不依附于任何个人、组织而存在的安全兴趣团队，成立至今也有几个年头了。我们因为共同对安全领域的热爱痴迷而走到一起，哪里有技术哪里就可能有我们成员的身影。<br>可以爱 Web ，也可以钻研二进制；<br>可以爱系统内核，也可以折腾硬件设备。<br>无论被细分到了何种领域，只要是安全方向，我们便能畅快地交流、共同学习、一起实战。能做点实事，便是我们最简单而真实的初衷。<br>不过放轻松，<br>我们只是因为热爱安全聚在一起玩玩而已，<br>在有限是时间里高效学习，在无限的时间里肆意扯谈，天（jie）文（cao）地（xia）理（xian）无（si）所（hu）不（mei）包（you）。</p>
-]]></summary>
-    
-      <category term="intro" scheme="http://l4f.club/tags/intro/"/>
-    
-      <category term="自由之光" scheme="http://l4f.club/tags/%E8%87%AA%E7%94%B1%E4%B9%8B%E5%85%89/"/>
-    
-      <category term="Light4Freedom" scheme="http://l4f.club/tags/Light4Freedom/"/>
-    
-      <category term="About" scheme="http://l4f.club/categories/About/"/>
-    
-  </entry>
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
   
-</feed>
+  &copy; 2014 John Doe
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'light4freedom';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fab2605389f1b090a6703fe6474048157' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53473720-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>

@@ -6,7 +6,7 @@
   <title>Archives: 2014/8 | Light 4 Freedom</title>
   <meta name="author" content="John Doe">
   
-  <meta name="description" content="自由之光,Light4Freedom,CTF,L4F,0day,vuln">
+  <meta name="description" content="自由之光,Light4Freedom,CTF,L4F">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -57,7 +57,47 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-08-03T16:22:49.000Z"><a href="/2014/08/04/About-Us/">Aug 4 2014</a></time>
+        <time datetime="2014-08-30T12:00:00.000Z"><a href="/2014/08/30/The-Research-About-Baidu-Hi/">Aug 30 2014</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2014/08/30/The-Research-About-Baidu-Hi/">百度Hi安全性探究</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Author: Binary.Kim@Light4Freedom</p>
+<h1 id="缘起">缘起</h1>
+<p>今天天气好，就想分析个软件看看安全性。(・ω・)ノ 然后就随意翻翻，就决定开始分析下百度Hi，并且对它的安全性进行一次分析，并将结果反馈给了百度，最后花了<del>一会儿</del>不止一会儿写了这篇文章。然后自我介绍下，我叫金龟子。大家可以叫我 Binary.Kim 简称「BK」。</p>
+<h1 id="另">另</h1>
+<p>本文为妹子拙作，比较详细，记录了下我分析的过程，不喜勿喷。 ಥ_ಥ<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2014/08/30/The-Research-About-Baidu-Hi/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+  
+    <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-08-03T16:00:00.000Z"><a href="/2014/08/04/About-Us/">Aug 4 2014</a></time>
       
       
   
@@ -67,7 +107,8 @@
     </header>
     <div class="entry">
       
-        <pre>海面风平浪静，海岸旁一座灯塔屹立，光芒延伸向远方……
+        <p>Author : Kay@Light4Freedom</p>
+<pre>海面风平浪静，海岸旁一座灯塔屹立，光芒延伸向远方……
 
 安全的世界亦是如此，乍看之下天下太平，
 实则平静的水面下暗流涌动。
@@ -83,35 +124,15 @@
 <p>「自由之光」（Light 4 Freedom）团队便是由这样一群人组成。</p>
 <h1 id="我们是谁">我们是谁</h1>
 <p>Light 4 Freedom 是一个不依附于任何个人、组织而存在的安全兴趣团队，成立至今也有几个年头了。我们因为共同对安全领域的热爱痴迷而走到一起，哪里有技术哪里就可能有我们成员的身影。<br>可以爱 Web ，也可以钻研二进制；<br>可以爱系统内核，也可以折腾硬件设备。<br>无论被细分到了何种领域，只要是安全方向，我们便能畅快地交流、共同学习、一起实战。能做点实事，便是我们最简单而真实的初衷。<br>不过放轻松，<br>我们只是因为热爱安全聚在一起玩玩而已，<br>在有限是时间里高效学习，在无限的时间里肆意扯谈，天（jie）文（cao）地（xia）理（xian）无（si）所（hu）不（mei）包（you）。</p>
-<h1 id="逝者如斯">逝者如斯</h1>
-<p>过去几年，我们的团队成员混迹于各大比赛，所以其实你可以叫我们「赛棍」的。</p>
-<p><strong>以下是团队荣誉不完全统计：</strong></p>
-<ul>
-<li><p>2012 年 11 月  西安电子科技大学网络攻防大赛第一名</p>
-</li>
-<li><p>2013 年 11 月  西安电子科技大学网络攻防大赛第二名</p>
-</li>
-<li><p>2014 年 03 月  0ctf 获得第二名</p>
-</li>
-<li><p>2014 年 04 月  第一届 XP 挑战赛 团队成员 Puzzor 获第一名</p>
-</li>
-<li><p>2014 年 05 月  获得百度杯 BCTF 网络攻防大赛决赛第四名</p>
-</li>
-<li><p>2014 年 07 月  第二届 XP 挑战赛 团队成员 TedJoy 第一个攻破北信源并与团队成员 nGod 用不同的思路双双攻破百度卫士</p>
-</li>
-<li><p>2014 年 08 月  阿里安全·阿里 500 万安全赏金计划 对团队成员 EvilMoon 反馈的安全漏洞 给予五万元现金奖励以及公示感谢   </p>
-</li>
-</ul>
-<p>…………</p>
-<h1 id="未来因我们而来">未来因我们而来</h1>
-<p>在未来，我们将继续脚踏实地学习研究各类安全技术，追逐和坚持技术自由,同时敞开胸怀接纳更多新人的加入，广泛与同行以及各行各业对安全感兴趣的同仁们交流合作，<br>我们的愿景是，将安全研究与应用技术紧密结合，把安全落实于各个行业领域当中，让你在生活的方方面面都能感受到「安全」的存在。</p>
-<h1 id="天下大同">天下大同</h1>
-<p>如果你也跟我们一样不羁放纵爱自由，聪明机智爱安全。无论是新人还是牛人还是新生代牛人，我们都热情欢迎你的加入。</p>
 
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2014/08/04/About-Us/#more" class="more-link">Read More</a>
+          </div>
         
         
       
@@ -139,19 +160,24 @@
 </div>
 
   
-
-  
 <div class="widget tag">
-  <h3 class="title">Tags</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
-    <li><a href="/tags/Light-4-Freedom/">Light 4 Freedom</a><small>0</small></li>
+    <li><a href="/categories/About/">About</a><small>1</small></li>
   
-    <li><a href="/tags/intro/">intro</a><small>1</small></li>
-  
-    <li><a href="/tags/自由之光/">自由之光</a><small>0</small></li>
+    <li><a href="/categories/Binary/">Binary</a><small>1</small></li>
   
   </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">Tag Cloud</h3>
+  <div class="entry">
+    <a href="/tags/Light4Freedom/" style="font-size: NaNpx;">Light4Freedom</a><a href="/tags/intro/" style="font-size: NaNpx;">intro</a><a href="/tags/百度Hi/" style="font-size: NaNpx;">百度Hi</a><a href="/tags/自由之光/" style="font-size: NaNpx;">自由之光</a><a href="/tags/逆向/" style="font-size: NaNpx;">逆向</a>
+  </div>
 </div>
 
 
@@ -181,6 +207,18 @@
 <script src="/js/gallery.js"></script>
 
 
+<script type="text/javascript">
+var disqus_shortname = 'light4freedom';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
 
 
 <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
@@ -191,6 +229,10 @@
 })(jQuery);
 </script>
 
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fab2605389f1b090a6703fe6474048157' type='text/javascript'%3E%3C/script%3E"));
+</script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -201,5 +243,6 @@
   ga('send', 'pageview');
 
 </script>
+
 </body>
 </html>
