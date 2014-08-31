@@ -69,29 +69,29 @@
 <p>本文为妹子拙作，比较详细，记录了下我分析的过程，不喜勿喷。 ಥ_ಥ<br><a id="more"></a></p>
 <h1 id="密码处理分析流程">密码处理分析流程</h1>
 <p>首先将程序载入 OD 咯，并且 OD 里面下 GetWindowsTextW 的断点。继而发现我每点击一次按键，就会断下来，那么肯定是在 hook了WH_KEYBOARD 消息的消息处理函数中做了处理。</p>
-<p>对 SetWindowsHookExW 函数下断点，可以看到 WH_KEYBOARD 消息钩子的处理函数。</p>
+<p>对 SetWindowsHookExW 函数下断点，可以看到 WH_KEYBOARD 消息钩子的处理函数</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/1.png" alt=""></p>
-<p>并且我发现有一个 while 循环一直在安装钩子。一直安装消息钩子的目的就是保证他自己的消息钩子是处于钩子链的最上面，这样就不会被其他的键盘钩子截获到消息。</p>
+<p>并且我发现有一个 while 循环一直在安装钩子。一直安装消息钩子的目的就是保证他自己的消息钩子是处于钩子链的最上面，这样就不会被其他的键盘钩子截获到消息</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/2.png" alt=""></p>
-<p>进钩子消息处理函数里面看看。以下只跟踪密码处理流程。在这个处理函数中，先会判断按键焦点的位置，是不是密码框，如果是密码框就会走密码的处理流程。</p>
+<p>进钩子消息处理函数里面看看。以下只跟踪密码处理流程。在这个处理函数中，先会判断按键焦点的位置，是不是密码框，如果是密码框就会走密码的处理流程</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/3.png" alt=""></p>
-<p>这里是判断密码是数字还是字母或者是其他的。</p>
+<p>这里是判断密码是数字还是字母或者是其他的</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/4.png" alt=""></p>
-<p>并且得到输入密码长度。</p>
+<p>并且得到输入密码长度</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/5.png" alt=""></p>
-<p>接着发现对密码的第一位进行了 base64 编码。</p>
+<p>接着发现对密码的第一位进行了 base64 编码</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/6.png" alt=""></p>
-<p>在此我们可以看到加密之后的数据是一个8字节的字符串。</p>
+<p>在此我们可以看到加密之后的数据是一个8字节的字符串</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/7.png" alt=""></p>
 <p>之后会将这个8字节字符串进行 base64 解码，解码之后拼接之前输入的密码字符，然后一起用 MD5 加密一次，加密后的数据是一个 MD5 hash 串。（有点记流水账的样子，但是我乐意噻～后面你们就懂什么意思了。） </p>
 <p><img src="/static/The-Research-About-Baidu-Hi/8.png" alt=""></p>
-<p>跟了一下发现，之后也没有把这个消息传给下发。<br>再来看看第密码的第二个字符输入进来之后，首先要对编码后的密码的第一个字符进行解码。</p>
+<p>跟了一下发现，之后也没有把这个消息传给下发。<br>再来看看第密码的第二个字符输入进来之后，首先要对编码后的密码的第一个字符进行解码</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/9.png" alt=""></p>
-<p>解码之后在对当前输入的密码字符进行base64编码，然后编码之后保存起来，再对其进行解码。</p>
+<p>解码之后在对当前输入的密码字符进行base64编码，然后编码之后保存起来，再对其进行解码</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/10.png" alt=""><br><img src="/static/The-Research-About-Baidu-Hi/11.png" alt=""></p>
 <p>然后再把这两个东西拼起来 -_,-</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/13.png" alt=""></p>
-<p>这样一直重复，直到最后一个字符都进来，然后就是完整的密码了，然后对这串密码进行 MD5 加密，最后算出一个 MD5Hash。</p>
+<p>这样一直重复，直到最后一个字符都进来，然后就是完整的密码了，然后对这串密码进行 MD5 加密，最后算出一个 MD5Hash</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/14.png" alt=""></p>
 <h1 id="总结分析">总结分析</h1>
 <p>整个流程可以概括为：</p>
@@ -99,14 +99,14 @@
 
 <p>其实整个流程不难，主要是分析下程序员的思路挺有意思。程序员为了避免将密码明文出现在内存中，蛋疼的进行一次又一次的编码解码拼接，再编码解码拼接balabala……</p>
 <p>但是！</p>
-<p>人生最精彩的就是这个但是。<br>他这么操作总会有一步是将密码明文放在内存中的（呵呵），所以假设我是一个怪蜀黍，想偷看我们这些可爱的妹子的密码。我只需要找到一个他 Base64 解码的位置就能将密码偷出来了呢。<br>为了广大女生的安全，我只能模拟一下怪蜀黍的行为，看看是否可行咯～ (￣^￣)ゞ</p>
-<p>在这个WH_KEYBOARD的处理流程中，我发现了一个地方，就是下面这个地方。这个地方会直接以明文的方式把用户输入过的密码字符全部显示出来。于是我就想我可以在这里抓取密码。我也是这样做的。我hook偏移0x000xxxx4的位置，jmp到我的函数中，读取密码，然后在执行我抹掉的5字节代码，然后继续往下执行。<br><img src="/static/The-Research-About-Baidu-Hi/15.png" alt=""><br>密码拿到了，用户名就很好拿了。<br>ImEngine.dll这个dll是处理发包收包的库。登陆认证也是在这里面完成的。在这里面我找了两个点，一个电是点击登陆之后会在内存中显示用户名的明文的点，还有一个点是登陆成功之后回去调用的点。我hook了这两个地方，其一是为了拿到用户名，其二是为了做登陆是否成功的认证。<br>下面就是我hook的得到用户名的点。得到用户名我是直接去ecx里面取的值。</p>
+<p>人生最精彩的就是这个「但是」。<br>他这么操作总会有一步是将密码明文放在内存中的（呵呵），所以假设我是一个怪蜀黍，想偷看我们这些可爱的妹子的密码。我只需要找到一个他 Base64 解码的位置就能将密码偷出来了呢。<br>为了广大女生的安全，我只能模拟一下怪蜀黍的行为，看看是否可行咯～ (￣^￣)ゞ</p>
+<p>在这个 WH_KEYBOARD 的处理流程中，我发现了一个地方，就是下面这个地方。这个地方会直接以明文的方式把用户输入过的密码字符全部显示出来。于是我就想我可以在这里抓取密码。我也是这样做的。我 hook 偏移0x000xxxx4的位置，jmp 到我的函数中，读取密码，然后在执行我抹掉的5字节代码，然后继续往下执行。<br><img src="/static/The-Research-About-Baidu-Hi/15.png" alt=""><br>密码拿到了，用户名就很好拿了。<br> ImEngine.dll 这个 dll 是处理发包收包的库。登陆认证也是在这里面完成的。在这里面我找了两个点，一个点是点击登陆之后会在内存中显示用户名的明文的点，还有一个点是登陆成功之后回去调用的点。我 hook 了这两个地方，其一是为了拿到用户名，其二是为了做登陆是否成功的认证。<br>下面就是我 hook 的得到用户名的点。得到用户名我是直接去 ecx 里面取的值。</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/16.png" alt=""></p>
-<p>用户登陆完成之后会执行下面的这个地方，所以我在这里hook，用来判断用户是否成功登陆，成功登陆就以为着这个用户名和密码是可行的。</p>
+<p>用户登陆完成之后会执行下面的这个地方，所以我在这里 hook ，用来判断用户是否成功登陆，成功登陆就以为着这个用户名和密码是可行的。</p>
 <p><img src="/static/The-Research-About-Baidu-Hi/17.png" alt=""></p>
 <p>别的不说，上代码。（说明：只是为了验证是否可行咯，所以代码可定有问题啦，坏人们肯定不能直接拿来用啦～）</p>
 <h1 id="我是有问题的代码">我是有问题的代码</h1>
-<p>首先要注入一个dll到百度hi的进程中。注入的代码很好写。首先先将自己的进程提权</p>
+<p>首先要注入一个 dll 到百度hi的进程中。注入的代码很好写。首先先将自己的进程提权</p>
 <p>首先先将自己的进程提权</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">HANDLE hToken;</div><div class="line"><span class="built_in">BOOL</span> f0k = <span class="literal">TRUE</span>;</div><div class="line"><span class="keyword">if</span> (OpenProcessToken(GetCurrentProcess(), TOKENS_ADJUST_PRIVILEGES, &hToken))</div><div class="line">{</div><div class="line">	TOKEN_PRIVILEGES tp;</div><div class="line">	tp<span class="variable">.PrivilegeCount</span> = <span class="number">1</span>;</div><div class="line">	LookupPrivilegeValue(<span class="literal">NULL</span>, SE_DEBUG_NAME, &tp<span class="variable">.Privileges</span>[<span class="number">0</span>]<span class="variable">.Luid</span>);</div><div class="line">	tp<span class="variable">.Privilege</span>[<span class="number">0</span>]<span class="variable">.Attributes</span> = SE_PRIVILEGE_DISABLED;</div><div class="line"></div><div class="line">	AdjustTokenPrivileges(hToken, <span class="literal">FALSE</span>, &tp, <span class="keyword">sizeof</span>(tp), <span class="literal">NULL</span>, <span class="literal">NULL</span>)</div><div class="line"></div><div class="line">	f0k = (GetLastError() == ERROR_SUCCESS);</div><div class="line">	CloseHandle(hToken);</div><div class="line">}</div></pre></td></tr></table></figure>
 
