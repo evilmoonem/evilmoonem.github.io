@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Give me liberty or give me death.]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://l4f.club/"/>
-  <updated>2014-08-31T03:24:59.976Z</updated>
+  <updated>2014-08-31T08:27:37.054Z</updated>
   <id>http://l4f.club/</id>
   
   <author>
@@ -124,7 +124,7 @@
     <link href="http://l4f.club/2014/08/04/About-Us/"/>
     <id>http://l4f.club/2014/08/04/About-Us/</id>
     <published>2014-08-03T16:00:00.000Z</published>
-    <updated>2014-08-30T12:06:18.000Z</updated>
+    <updated>2014-08-31T08:27:17.000Z</updated>
     <content type="html"><![CDATA[<p>Author : Kay@Light4Freedom</p>
 <pre>海面风平浪静，海岸旁一座灯塔屹立，光芒延伸向远方……
 
@@ -139,12 +139,9 @@
 
 
 
-<p>「自由之光」（Light 4 Freedom）团队便是由这样一群人组成。</p>
+<p>「自由之光」（Light 4 Freedom）团队便是由这样一群人组成。<br><a id="more"></a></p>
 <h1 id="我们是谁">我们是谁</h1>
 <p>Light 4 Freedom 是一个不依附于任何个人、组织而存在的安全兴趣团队，成立至今也有几个年头了。我们因为共同对安全领域的热爱痴迷而走到一起，哪里有技术哪里就可能有我们成员的身影。<br>可以爱 Web ，也可以钻研二进制；<br>可以爱系统内核，也可以折腾硬件设备。<br>无论被细分到了何种领域，只要是安全方向，我们便能畅快地交流、共同学习、一起实战。能做点实事，便是我们最简单而真实的初衷。<br>不过放轻松，<br>我们只是因为热爱安全聚在一起玩玩而已，<br>在有限是时间里高效学习，在无限的时间里肆意扯谈，天（jie）文（cao）地（xia）理（xian）无（si）所（hu）不（mei）包（you）。</p>
-<a id="more"></a>
-
-
 <h1 id="逝者如斯">逝者如斯</h1>
 <p>过去几年，我们的团队成员混迹于各大比赛，所以其实你可以叫我们「赛棍」的。</p>
 <p><strong>以下是团队荣誉不完全统计：</strong></p>
@@ -186,10 +183,7 @@
 
 
 
-<p>「自由之光」（Light 4 Freedom）团队便是由这样一群人组成。</p>
-<h1 id="我们是谁">我们是谁</h1>
-<p>Light 4 Freedom 是一个不依附于任何个人、组织而存在的安全兴趣团队，成立至今也有几个年头了。我们因为共同对安全领域的热爱痴迷而走到一起，哪里有技术哪里就可能有我们成员的身影。<br>可以爱 Web ，也可以钻研二进制；<br>可以爱系统内核，也可以折腾硬件设备。<br>无论被细分到了何种领域，只要是安全方向，我们便能畅快地交流、共同学习、一起实战。能做点实事，便是我们最简单而真实的初衷。<br>不过放轻松，<br>我们只是因为热爱安全聚在一起玩玩而已，<br>在有限是时间里高效学习，在无限的时间里肆意扯谈，天（jie）文（cao）地（xia）理（xian）无（si）所（hu）不（mei）包（you）。</p>
-]]></summary>
+<p>「自由之光」（Light 4 Freedom）团队便是由这样一群人组成。<br>]]></summary>
     
       <category term="intro" scheme="http://l4f.club/tags/intro/"/>
     
